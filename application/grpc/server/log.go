@@ -6,18 +6,18 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"m1-article-service/domain/entity"
-	"m1-article-service/domain/service/log"
+	"m1-article-service/domain/service/article"
 	logger "m1-article-service/infrastructure/log"
 )
 
 type LogServer struct {
 	logger     logger.Logger
-	logService *log.Service
+	logService *article.Service
 
 	logv1.UnimplementedLogServiceServer
 }
 
-func NewLogServer(logger logger.Logger, logService *log.Service) *LogServer {
+func NewLogServer(logger logger.Logger, logService *article.Service) *LogServer {
 	return &LogServer{logger: logger, logService: logService}
 }
 

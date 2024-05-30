@@ -10,7 +10,7 @@ import (
 	"log"
 	"m1-article-service/application/grpc/server"
 	"m1-article-service/domain/repository/article/pgx"
-	logService "m1-article-service/domain/service/log"
+	logService "m1-article-service/domain/service/article"
 	"m1-article-service/infrastructure/godotenv"
 	"m1-article-service/infrastructure/log/zerolog"
 	"net"

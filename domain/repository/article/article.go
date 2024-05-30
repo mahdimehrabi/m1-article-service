@@ -10,5 +10,5 @@ type Article interface {
 	Update(context.Context, *entity.Article) error
 	Delete(context.Context, int64) error
 	Detail(context.Context, int64) (*entity.Article, error)
-	List(context.Context) ([]*entity.Article, error)
+	List(context.Context, uint16) ([]*entity.Article, error)
 }
