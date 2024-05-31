@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
-	logv1 "github.com/mahdimehrabi/m1-log-proto/gen/go/log/v1"
+	articlev1 "github.com/mahdimehrabi/m1-article-proto/gen/go/article/article"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"m1-article-service/application/grpc/server"
 	"m1-article-service/domain/repository/article/pgx"
-	logService "m1-article-service/domain/service/log"
+	"m1-article-service/domain/service/article"
 	"m1-article-service/infrastructure/godotenv"
 	"m1-article-service/infrastructure/log/zerolog"
 	"net"
@@ -26,11 +26,11 @@ func Boot() {
 		log.Fatal(err)
 	}
 
-	logRepo := pgx.NewLogRepository(env, conn)
+	articleRepo := pgx.NewArticleRepository(env, conn)
 	if err != nil {
 		log.Fatal(err)
 	}
-	loggerService := logService.NewService(logger, logRepo)
+	loggerService := article.NewService(logger, articleRepo)
 
 	lis, err := net.Listen("tcp", env.ServerAddr)
 	if err != nil {
@@ -38,8 +38,8 @@ func Boot() {
 	}
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
-	logServer := server.NewLogServer(logger, loggerService)
-	logv1.RegisterLogServiceServer(grpcServer, logServer)
+	articleServer := server.NewArticleServer(logger, loggerService)
+	articlev1.RegisterArticleServiceServer(grpcServer, articleServer)
 
 	reflection.Register(grpcServer)
 	logger.Info(fmt.Sprintf("running grpc server on: %s ⛴", env.ServerAddr))

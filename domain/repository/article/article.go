@@ -2,7 +2,14 @@ package article
 
 import (
 	"context"
+	"errors"
 	"m1-article-service/domain/entity"
+)
+
+var (
+	ErrAlreadyExist = errors.New("already exist")
+	ErrValidation   = errors.New("validation error")
+	ErrNotFound     = errors.New("not found")
 )
 
 type Article interface {
@@ -10,5 +17,5 @@ type Article interface {
 	Update(context.Context, *entity.Article) error
 	Delete(context.Context, int64) error
 	Detail(context.Context, int64) (*entity.Article, error)
-	List(context.Context) ([]*entity.Article, error)
+	List(context.Context, uint16) ([]*entity.Article, error)
 }
