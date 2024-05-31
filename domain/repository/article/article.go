@@ -9,6 +9,7 @@ import (
 var (
 	ErrAlreadyExist = errors.New("already exist")
 	ErrValidation   = errors.New("validation error")
+	ErrNotFound     = errors.New("not found")
 )
 
 type Article interface {
