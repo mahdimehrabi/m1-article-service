@@ -340,3 +340,95 @@ func BenchmarkService_Detail(b *testing.B) {
 	loggerMock.EXPECT()
 	articleRepoMock.EXPECT()
 }
+
+func TestService_List(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	t.Cleanup(func() {
+		ctrl.Finish()
+	})
+	err := errors.New("error")
+	articles := []*entity.Article{
+		entity.NewArticle("title1", "slug", []string{"tag1", "tag2", "tag3"}),
+		entity.NewArticle("title2", "slug", []string{"tag1", "tag2", "tag3"}),
+		entity.NewArticle("title3", "slug", []string{"tag1", "tag2", "tag3"}),
+	}
+
+	var tests = []struct {
+		name            string
+		loggerMock      func() *infraMock.MockLog
+		articleRepoMock func() *mock_article.MockArticle
+		error           error
+		ctx             context.Context
+		articles        []*entity.Article
+	}{
+		{
+			name: "success",
+			loggerMock: func() *infraMock.MockLog {
+				loggerInfra := infraMock.NewMockLog(ctrl)
+				return loggerInfra
+			},
+			articleRepoMock: func() *mock_article.MockArticle {
+				repoLogMock := mock_article.NewMockArticle(ctrl)
+				repoLogMock.EXPECT().List(gomock.Any(), gomock.Any()).Return(articles, nil)
+				return repoLogMock
+			},
+			error:    nil,
+			ctx:      context.Background(),
+			articles: articles,
+		},
+		{
+			name: "RepoError",
+			loggerMock: func() *infraMock.MockLog {
+				loggerInfra := infraMock.NewMockLog(ctrl)
+				loggerInfra.EXPECT().Error(err).Return()
+				return loggerInfra
+			},
+			articleRepoMock: func() *mock_article.MockArticle {
+				repoLogMock := mock_article.NewMockArticle(ctrl)
+				repoLogMock.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, err)
+				return repoLogMock
+			},
+			error:    err,
+			ctx:      context.Background(),
+			articles: nil,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			logRepoMock := test.articleRepoMock()
+			loggerMock := test.loggerMock()
+			service := NewService(loggerMock, logRepoMock)
+			resArticle, err := service.List(test.ctx, 1)
+			if !errors.Is(err, test.error) {
+				t.Error("error is not equal")
+			}
+
+			if !gomock.Eq(resArticle).Matches(test.articles) {
+				t.Error("returned articles is not the same")
+			}
+			loggerMock.EXPECT()
+			logRepoMock.EXPECT()
+		})
+	}
+}
+
+func BenchmarkService_List(b *testing.B) {
+	ctrl := gomock.NewController(b)
+	articleRepoMock := mock_article.NewMockArticle(ctrl)
+	articles := []*entity.Article{
+		entity.NewArticle("title1", "slug", []string{"tag1", "tag2", "tag3"}),
+		entity.NewArticle("title2", "slug", []string{"tag1", "tag2", "tag3"}),
+		entity.NewArticle("title3", "slug", []string{"tag1", "tag2", "tag3"}),
+	}
+	articleRepoMock.EXPECT().List(gomock.Any(), uint16(1)).Return(articles, nil)
+	loggerMock := infraMock.NewMockLog(ctrl)
+	b.ResetTimer()
+	service := NewService(loggerMock, articleRepoMock)
+	service.List(context.Background(), uint16(1))
+	if b.Elapsed() > 100*time.Microsecond {
+		b.Error("article service-detail takes too long to run")
+	}
+	loggerMock.EXPECT()
+	articleRepoMock.EXPECT()
+}
