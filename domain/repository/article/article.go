@@ -2,7 +2,13 @@ package article
 
 import (
 	"context"
+	"errors"
 	"m1-article-service/domain/entity"
+)
+
+var (
+	ErrAlreadyExist = errors.New("already exist")
+	ErrValidation   = errors.New("validation error")
 )
 
 type Article interface {

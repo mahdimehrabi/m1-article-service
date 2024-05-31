@@ -74,7 +74,7 @@ func TestService_Create(t *testing.T) {
 	}
 }
 
-func BenchmarkService_Store(b *testing.B) {
+func BenchmarkService_Create(b *testing.B) {
 	ctrl := gomock.NewController(b)
 	articleRepoMock := mock_article.NewMockArticle(ctrl)
 	articleRepoMock.EXPECT().Create(gomock.Any(), gomock.Any()).Return(int64(1), nil)
@@ -82,6 +82,83 @@ func BenchmarkService_Store(b *testing.B) {
 
 	service := NewService(loggerMock, articleRepoMock)
 	service.Create(context.Background(), entity.NewArticle("title", "slug", []string{"tag1", "tag2", "tag3"}))
+
+	loggerMock.EXPECT()
+	articleRepoMock.EXPECT()
+}
+
+func TestService_Update(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	t.Cleanup(func() {
+		ctrl.Finish()
+	})
+	err := errors.New("error")
+
+	var tests = []struct {
+		name            string
+		article         *entity.Article
+		loggerMock      func() *infraMock.MockLog
+		articleRepoMock func() *mock_article.MockArticle
+		error           error
+		ctx             context.Context
+	}{
+		{
+			name: "success",
+			loggerMock: func() *infraMock.MockLog {
+				loggerInfra := infraMock.NewMockLog(ctrl)
+				return loggerInfra
+			},
+			articleRepoMock: func() *mock_article.MockArticle {
+				repoLogMock := mock_article.NewMockArticle(ctrl)
+				repoLogMock.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
+				return repoLogMock
+			},
+			article: entity.NewArticle("title", "slug", []string{"tag1", "tag2", "tag3"}),
+			error:   nil,
+			ctx:     context.Background(),
+		},
+		{
+			name: "RepoError",
+			loggerMock: func() *infraMock.MockLog {
+				loggerInfra := infraMock.NewMockLog(ctrl)
+				loggerInfra.EXPECT().Error(err).Return()
+				return loggerInfra
+			},
+			articleRepoMock: func() *mock_article.MockArticle {
+				repoLogMock := mock_article.NewMockArticle(ctrl)
+				repoLogMock.EXPECT().Update(gomock.Any(), gomock.Any()).Return(err)
+				return repoLogMock
+			},
+			article: entity.NewArticle("title", "slug", []string{"tag1", "tag2", "tag3"}),
+			error:   err,
+			ctx:     context.Background(),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			logRepoMock := test.articleRepoMock()
+			loggerMock := test.loggerMock()
+			service := NewService(loggerMock, logRepoMock)
+			err := service.Update(test.ctx, test.article)
+			if !errors.Is(err, test.error) {
+				t.Error("error is not equal")
+			}
+
+			loggerMock.EXPECT()
+			logRepoMock.EXPECT()
+		})
+	}
+}
+
+func BenchmarkService_Update(b *testing.B) {
+	ctrl := gomock.NewController(b)
+	articleRepoMock := mock_article.NewMockArticle(ctrl)
+	articleRepoMock.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
+	loggerMock := infraMock.NewMockLog(ctrl)
+
+	service := NewService(loggerMock, articleRepoMock)
+	service.Update(context.Background(), entity.NewArticle("title", "slug", []string{"tag1", "tag2", "tag3"}))
 
 	loggerMock.EXPECT()
 	articleRepoMock.EXPECT()
