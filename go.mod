@@ -6,6 +6,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/joho/godotenv v1.5.1
+	github.com/mahdimehrabi/m1-article-proto v0.0.0-20240531205954-b58344962914
 	github.com/mahdimehrabi/m1-log-proto v0.0.0-20240530000203-c75388e15dfe
 	github.com/rs/zerolog v1.33.0
 	google.golang.org/grpc v1.64.0

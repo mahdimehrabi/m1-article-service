@@ -22,15 +22,15 @@ func NewArticleRepository(env *godotenv.Env, conn *pgxpool.Pool) *ArticleReposit
 	return lr
 }
 
-func (r ArticleRepository) Create(ctx context.Context, article *entity.Article) error {
+func (r ArticleRepository) Create(ctx context.Context, article *entity.Article) (int64, error) {
 	sql := `INSERT INTO articles (title,slug,tags,created_at) VALUES($1,$2,$3,$4) RETURNING id`
 	err := r.conn.
 		QueryRow(ctx, sql,
 			article.Title, article.Slug, article.Tags, article.CreatedAt).Scan(&article.ID)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return article.ID, err
 }
 
 func (r ArticleRepository) Update(ctx context.Context, article *entity.Article) error {

@@ -17,6 +17,10 @@ github.com/jackc/puddle/v2 v2.2.1 h1:RhxXJtFG022u4ibrCSMSiu5aOq1i77R3OHKNJj77OAk
 github.com/jackc/puddle/v2 v2.2.1/go.mod h1:vriiEXHvEE654aYKXXjOvZM39qJ0q+azkZFrfEOc3H4=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
+github.com/mahdimehrabi/m1-article-proto v0.0.0-20240530031814-d1e3a326eeae h1:c7/s0aMGwX58mdNtI+r7ZfFAvzi2cSuYXKzm5AqNo40=
+github.com/mahdimehrabi/m1-article-proto v0.0.0-20240530031814-d1e3a326eeae/go.mod h1:n67biCkfp9L7z+Kzo4g+Od5w+c7MUwdQ1Pg0HODyyiM=
+github.com/mahdimehrabi/m1-article-proto v0.0.0-20240531205954-b58344962914 h1:LaUr1to2Yv0yJq0p1szb88/jZb1taeOqjEV33LeTuZ8=
+github.com/mahdimehrabi/m1-article-proto v0.0.0-20240531205954-b58344962914/go.mod h1:n67biCkfp9L7z+Kzo4g+Od5w+c7MUwdQ1Pg0HODyyiM=
 github.com/mahdimehrabi/m1-log-proto v0.0.0-20240530000203-c75388e15dfe h1:yJoQQF+yZlTB7gx+0/QDx8VoGlrPYoaIFY4srKYD+pY=
 github.com/mahdimehrabi/m1-log-proto v0.0.0-20240530000203-c75388e15dfe/go.mod h1:yBl8AqRmLutqtkznKAaITntfI3XOUOwJaHTIvVP2V84=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
