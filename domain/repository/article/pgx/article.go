@@ -34,8 +34,8 @@ func (r ArticleRepository) Create(ctx context.Context, article *entity.Article) 
 }
 
 func (r ArticleRepository) Update(ctx context.Context, article *entity.Article) error {
-	if _, err := r.conn.Exec(ctx, `UPDATE articles SET title=$1,slug=$2,tags=$3,created_at=$4 WHERE id=$5`,
-		article.Title, article.Slug, article.Tags, article.CreatedAt, article.ID); err != nil {
+	if _, err := r.conn.Exec(ctx, `UPDATE articles SET title=$1,slug=$2,tags=$3 WHERE id=$4`,
+		article.Title, article.Slug, article.Tags, article.ID); err != nil {
 		return err
 	}
 	return nil
@@ -49,7 +49,9 @@ func (r ArticleRepository) Delete(ctx context.Context, id int64) error {
 }
 
 func (r ArticleRepository) Detail(ctx context.Context, id int64) (article *entity.Article, err error) {
-	err = r.conn.QueryRow(ctx, `SELECT * FROM articles WHERE id=$1`, id).Scan(&article)
+	article = new(entity.Article)
+	err = r.conn.QueryRow(ctx, `SELECT * FROM articles WHERE id=$1`, id).
+		Scan(&article.ID, &article.Title, &article.Slug, &article.Tags, &article.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +67,7 @@ func (r ArticleRepository) List(ctx context.Context, pageNumber uint16) ([]*enti
 	}
 	for rows.Next() {
 		article := &entity.Article{}
-		if err := rows.Scan(article); err != nil {
+		if err := rows.Scan(&article.ID, &article.Title, &article.Slug, &article.Tags, &article.CreatedAt); err != nil {
 			return nil, err
 		}
 		articles = append(articles, article)

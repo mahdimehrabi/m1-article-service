@@ -30,7 +30,7 @@ func (a ArticleServer) Create(ctx context.Context, a2 *articlev1.Article) (*arti
 		return nil, status.Errorf(codes.AlreadyExists, "article with this title already exists")
 	} else if err != nil {
 		a.logger.Error(err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "internal error")
 	}
 
 	return &articlev1.ArticleCreateResponse{
@@ -40,6 +40,7 @@ func (a ArticleServer) Create(ctx context.Context, a2 *articlev1.Article) (*arti
 
 func (a ArticleServer) Update(ctx context.Context, a2 *articlev1.Article) (*articlev1.ArticleUpdateResponse, error) {
 	article := entity.NewArticle(a2.Title, a2.Slug, a2.Tags)
+	article.ID = a2.ID
 	err := a.articleService.Update(ctx, article)
 	if errors.Is(err, articleRepo.ErrAlreadyExist) {
 		return nil, status.Errorf(codes.AlreadyExists, "article with this title already exists")
@@ -47,7 +48,7 @@ func (a ArticleServer) Update(ctx context.Context, a2 *articlev1.Article) (*arti
 		return nil, status.Errorf(codes.NotFound, "article not found")
 	} else if err != nil {
 		a.logger.Error(err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "internal error")
 	}
 
 	return &articlev1.ArticleUpdateResponse{}, nil
@@ -59,7 +60,7 @@ func (a ArticleServer) Delete(ctx context.Context, id *articlev1.ArticleID) (*ar
 		return nil, status.Errorf(codes.NotFound, "article not found")
 	} else if err != nil {
 		a.logger.Error(err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "internal error")
 	}
 	return &articlev1.Empty{}, nil
 }
@@ -70,7 +71,7 @@ func (a ArticleServer) Detail(ctx context.Context, id *articlev1.ArticleID) (*ar
 		return nil, status.Errorf(codes.NotFound, "article not found")
 	} else if err != nil {
 		a.logger.Error(err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "internal error")
 	}
 	return &articlev1.ArticleDetailResponse{
 		Article: &articlev1.Article{
@@ -86,7 +87,7 @@ func (a ArticleServer) List(ctx context.Context, pagination *articlev1.Paginatio
 	articles, err := a.articleService.List(ctx, uint16(pagination.Page))
 	if err != nil {
 		a.logger.Error(err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "internal error")
 	}
 	articlesResObjs := make([]*articlev1.Article, len(articles))
 	for i, article := range articles {
